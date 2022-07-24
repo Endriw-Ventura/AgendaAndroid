@@ -1,7 +1,10 @@
 package com.example.agenda.ui.activity;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import com.example.agenda.R;
@@ -21,8 +24,22 @@ public class FormularioContatosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario_contatos);
         InicializaCampos();
-        ConfiguraBotaoSalvar();
         getDadosContato();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_formulario_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int idMenuSelecionado = item.getItemId();
+        if(idMenuSelecionado == R.id.menu_salvar){
+            finalizaFormulario();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void getDadosContato() {
@@ -44,11 +61,6 @@ public class FormularioContatosActivity extends AppCompatActivity {
         textNome.setText(contato.getNome());
         textTel.setText(contato.getTelefone());
         textEmail.setText(contato.getEmail());
-    }
-
-    private void ConfiguraBotaoSalvar() {
-        Button btnSalvar = findViewById(R.id.activity_formulario_contatos_btnSalvar);
-        btnSalvar.setOnClickListener(view -> finalizaFormulario());
     }
 
     private void finalizaFormulario() {

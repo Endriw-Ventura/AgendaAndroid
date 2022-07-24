@@ -1,10 +1,14 @@
 package com.example.agenda.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.agenda.R;
@@ -26,9 +30,37 @@ public class ListaContatosActivity extends AppCompatActivity {
         configuraLista();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.activity_lista_contatos_menu_context, menu);
+    }
+
     private void configuraNovoContatoFAB() {
         FloatingActionButton btnAddContato = findViewById(R.id.btnAddContato);
         btnAddContato.setOnClickListener(view -> abreFormularioNovoContato());
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Contato contatoEscolhido = adapter.getItem(menuInfo.position);
+        int idMenuSelecionado = item.getItemId();
+        switch (idMenuSelecionado){
+            case R.id.menu_remover:
+                DeleteContato(contatoEscolhido);
+                break;
+            case R.id.menu_editar:
+                abreFormularioEdicaoContato(contatoEscolhido);
+                break;
+            default:
+                break;
+        }
+
+
+
+
+        return super.onContextItemSelected(item);
     }
 
     private void abreFormularioNovoContato() {
@@ -49,28 +81,12 @@ public class ListaContatosActivity extends AppCompatActivity {
     private void configuraLista() {
         ListView listadeContatos = findViewById(R.id.listView);
         preparaAdapter(listadeContatos);
-        preparaLista(listadeContatos);
-        excluiContato(listadeContatos);
-    }
-
-    private void excluiContato(ListView listadeContatos) {
-        listadeContatos.setOnItemLongClickListener((adapterView, view, position, id) -> {
-            Contato contatoSelecionado = (Contato) adapterView.getItemAtPosition(position);
-            DeleteContato(contatoSelecionado);
-            return true;
-        });
+        registerForContextMenu(listadeContatos);
     }
 
     private void DeleteContato(Contato contatoSelecionado) {
         dao.remove(contatoSelecionado);
         adapter.remove(contatoSelecionado);
-    }
-
-    private void preparaLista(ListView listadeContatos) {
-        listadeContatos.setOnItemClickListener((adapterView, view, position, id) -> {
-            Contato contatoSelecionado = (Contato) adapterView.getItemAtPosition(position);
-            abreFormularioEdicaoContato(contatoSelecionado);
-        });
     }
 
     private void abreFormularioEdicaoContato(Contato contatoSelecionado) {
