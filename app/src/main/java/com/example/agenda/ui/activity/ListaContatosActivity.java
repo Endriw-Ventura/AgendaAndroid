@@ -2,10 +2,13 @@ package com.example.agenda.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -14,12 +17,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.agenda.R;
 import com.example.agenda.dao.ContatoDAO;
 import com.example.agenda.models.Contato;
+import com.example.agenda.ui.adapter.ListaContatoAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListaContatosActivity extends AppCompatActivity {
     private final ContatoDAO dao = new ContatoDAO();
-    private ArrayAdapter<Contato> adapter;
+    private ListaContatoAdapter adapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -74,8 +81,7 @@ public class ListaContatosActivity extends AppCompatActivity {
     }
 
     private void AtualizaListaContatos() {
-        adapter.clear();
-        adapter.addAll(dao.getAll());
+        adapter.AtualizaLista(dao.getAll());
     }
 
     private void configuraLista() {
@@ -86,7 +92,7 @@ public class ListaContatosActivity extends AppCompatActivity {
 
     private void DeleteContato(Contato contatoSelecionado) {
         dao.remove(contatoSelecionado);
-        adapter.remove(contatoSelecionado);
+        adapter.Remove(contatoSelecionado);
     }
 
     private void abreFormularioEdicaoContato(Contato contatoSelecionado) {
@@ -97,7 +103,8 @@ public class ListaContatosActivity extends AppCompatActivity {
 
 
     private void preparaAdapter(ListView listadeContatos) {
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+
+        adapter = new ListaContatoAdapter(this);
         listadeContatos.setAdapter(adapter);
     }
 }
